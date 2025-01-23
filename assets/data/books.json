@@ -1,0 +1,80 @@
+[{
+  "_id": {
+    "$oid": "677be230aedeae00f3dc2745"
+  },
+  "title": "Alice in Wonderland",
+  "author": "Lewis Carroll",
+  "description": "Description 1",
+  "imageUrl": "https://m.media-amazon.com/images/M/MV5BYjgxMTQ3NjMtOTI1Yy00Yzg4LWJlNWQtMjFkNjVlYjU0OWIyXkEyXkFqcGc@._V1_.jpg",
+  "price": 10.99,
+  "user": {
+    "email": "",
+    "password": "",
+    "username": "",
+    "books": []
+  }
+},
+{
+  "_id": {
+    "$oid": "677be230aedeae00f3dc2746"
+  },
+  "title": "The Paper Palace",
+  "author": "Miranda Cowley Heller",
+  "description": "On a perfect August morning, Elle Bishop heads out for a swim in the pond below 'The Paper Palace' - her family's holiday home in Cape Cod. As she dives beneath the water she relives the passionate encounter she had the night before, against the side of the house that knows all her darkest secrets, while her husband and mother chatted to their guests inside...",
+  "imageUrl": "https://cdn.penguin.co.uk/dam-assets/books/9780241990452/9780241990452-jacket-large.jpg",
+  "price": 12.99,
+  "user": {
+    "email": "",
+    "password": "",
+    "username": "",
+    "books": []
+  }
+},
+{
+  "_id": {
+    "$oid": "677be230aedeae00f3dc2747"
+  },
+  "title": "The List of Suspicious Things",
+  "author": "Jennie Godfrey",
+  "description": "Maggie Thatcher is prime minister, drainpipe jeans are in, and Miv is convinced that her dad wants to move their family Down South.Because of the murders.",
+  "imageUrl": "https://cdn.penguin.co.uk/dam-assets/books/9781529153293/9781529153293-jacket-large.jpg",
+  "price": 14.99,
+  "user": {
+    "email": "",
+    "password": "",
+    "username": "",
+    "books": []
+  }
+},
+{
+  "_id": {
+    "$oid": "678b469b7d9308ec56c95ee0"
+  },
+  "title": "The Husbands",
+  "imageUrl": "https://cdn.penguin.co.uk/dam-assets/books/9781784745356/9781784745356-jacket-large.jpg",
+  "description": "One of the funniest debuts for years... Holly Gramazio has not only come up with the most ingenious conceit, she has summoned the humour and sophistication to pull it off... a brilliant satire on the Tinder generation's commitment issues Johanna Thomas-Corr, Sunday Times.",
+  "author": "Holly Gramazio",
+  "price": 16.99,
+  "user": {
+    "email": "",
+    "password": "",
+    "username": "",
+    "books": []
+  }
+},
+{
+  "_id": {
+    "$oid": "678b47697d9308ec56c95ee1"
+  },
+  "title": "The Book of Doors",
+  "imageUrl": "https://cdn.penguin.co.uk/dam-assets/books/9781787637245/9781787637245-jacket-large.jpg",
+  "description": "The Book of Doors has everything — magic books, fascinating time loops, dreadful villains and likeable protagonists. Yet this is no children’s book, this is a book aimed squarely at adults. It’s clever, fast-paced and so very, very dark. I absolutely loved it. M. W. CRAVEN, author of the Washington Poe series",
+  "author": "Gareth Brown",
+  "price": 16.99,
+  "user": {
+    "email": "",
+    "password": "",
+    "username": "",
+    "books": []
+  }
+}]
