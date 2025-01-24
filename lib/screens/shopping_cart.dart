@@ -1,3 +1,5 @@
+import 'package:book_cart/apis/book_api.dart';
+import 'package:book_cart/models/cart.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -26,26 +28,10 @@ class ShoppingCartPageState extends State<ShoppingCartPage> {
 
   Future<List<Book>> getShoppingCart() async {
     try {
-      final Uri uri = Uri.parse('http://localhost:8000/cart/items/1/');
-      final response = await http.get(uri);
+      final CartResponse response = await getCart();
 
       if (response.statusCode == 200) {
-        final List<dynamic> cartItems = json.decode(response.body);
-
-        // Convert the cart items to a list of Book objects
-        List<Book> shoppingCart = cartItems.map((item) {
-          return Book(
-            item['title'],
-            item['author'],
-            item['description'],
-            item['imageUrl'],
-            item['id'],
-            item['price'],
-            item['user'],
-          );
-        }).toList();
-
-        return shoppingCart;
+        return response.cart.items;
       } else {
         // Handle error response
         throw Exception('Failed to load cart items');
@@ -56,40 +42,32 @@ class ShoppingCartPageState extends State<ShoppingCartPage> {
     }
   }
 
-  Future<void> removeFromShoppingCart(Book book, BuildContext context) async {
+  Future<void> updateShoppingCart() async {
     try {
-      final Uri uri = Uri.parse('http://localhost:8000/cart/update/1/');
-      final response = await http.post(
-        uri,
-        body: jsonEncode({
-          'book_id': book.id,
-          'add_to_cart': false, // Set to false since it's a removal
-        }),
-        headers: {'Content-Type': 'application/json'},
-      );
+      final statusCode = await updateCart();
 
-      if (response.statusCode == 200) {
+      if (statusCode == 200) {
         // Update the Future variable to trigger a rebuild
-        setState(() {
-          shoppingCartFuture = getShoppingCart();
-        });
+        // setState(() {
+        //   shoppingCartFuture = getShoppingCart();
+        // });
 
         // Show a SnackBar
         // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            backgroundColor: Colors.red,
+            backgroundColor: Colors.green,
             duration: Duration(milliseconds: 500),
-            content: Text('Removed from Shopping Cart'),
+            content: Text('Shopping Cart Checkedout Successfully'),
           ),
         );
       } else {
         // Handle error response
-        throw Exception('Failed to remove item from the cart');
+        throw Exception('Failed to Checkout  the cart');
       }
     } catch (error) {
       // Handle other errors
-      throw Exception('Failed to remove item from the cart');
+      throw Exception('Failed to Checkout the cart');
     }
   }
 
@@ -149,9 +127,9 @@ class ShoppingCartPageState extends State<ShoppingCartPage> {
                           title: Text(book.title),
                           subtitle: Text('Price: \$${book.price}'),
                           trailing: IconButton(
-                            icon: const Icon(Icons.remove_shopping_cart),
+                            icon: const Icon(Icons.pending_actions_outlined),
                             onPressed: () {
-                              removeFromShoppingCart(book, context);
+                              updateShoppingCart();
                             },
                           ),
                         );

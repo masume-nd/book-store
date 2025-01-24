@@ -3,6 +3,7 @@ import 'package:book_cart/screens/add_book.dart';
 import 'package:book_cart/screens/books.dart';
 import 'package:book_cart/screens/login.dart';
 import 'package:book_cart/screens/my_books.dart';
+import 'package:book_cart/screens/my_purchased.dart';
 import 'package:book_cart/utils/login.dart';
 import 'package:flutter/material.dart';
 import '../widgets/book_list.dart';
@@ -34,6 +35,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
+
     _initializeState(); // Async initialization
   }
 
@@ -57,16 +59,15 @@ class _MainScreenState extends State<MainScreen> {
     // Conditionally add LoginPage or MyBooksPage
     if (isAuthenticatedUser) {
       pages.insert(2, AddBookPage());
+      pages.insert(3, MyPurchased());
       pages.insert(
-          3, MyBooksPage()); // Insert MyBooksPage in the second position
+          4, MyBooksPage()); // Insert MyBooksPage in the second position
     } else {
       pages.insert(2, LoginPage()); // Insert LoginPage in the second position
     }
 
     return pages;
   }
-
-// Then use getPages() to initialize the _pages list
 
   void _onPageSelected(int page) {
     setState(() {
@@ -91,18 +92,19 @@ class _MainScreenState extends State<MainScreen> {
             icon: Icon(Icons.article),
             label: 'About us',
           ),
+          if (isAuthenticatedUser)
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.add),
+              label: 'Add Book',
+            ),
+          if (isAuthenticatedUser)
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.done_all_rounded),
+              label: 'Purchased',
+            ),
           isAuthenticatedUser
               ? const BottomNavigationBarItem(
-                  icon: Icon(Icons.add),
-                  label: 'Add Book',
-                )
-              : const BottomNavigationBarItem(
-                  icon: Icon(Icons.add),
-                  label: 'About us',
-                ),
-          isAuthenticatedUser
-              ? const BottomNavigationBarItem(
-                  icon: Icon(Icons.shopping_cart),
+                  icon: Icon(Icons.menu_book_sharp),
                   label: 'My Books',
                 )
               : const BottomNavigationBarItem(

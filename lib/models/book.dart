@@ -5,10 +5,10 @@ class Book {
   final String imageUrl;
   final String id;
   final double price;
-  final dynamic user;
+  // final dynamic user;
 
   Book(this.title, this.author, this.description, this.imageUrl, this.id,
-      this.price, this.user);
+      this.price);
 }
 
 // class Book {

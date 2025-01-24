@@ -1,3 +1,4 @@
+import 'package:book_cart/utils/login.dart';
 import 'package:flutter/material.dart';
 import './screens/main_screen.dart';
 import 'screens/shopping_cart.dart';
@@ -10,6 +11,10 @@ void main() async {
   await SharedPreferences
       .getInstance(); // Ensure that SharedPreferences is initialized before runApp
 
+  final token = await getToken();
+  if (token != null) {
+    scheduleLogoutBasedOnToken(token);
+  }
   runApp(
     ChangeNotifierProvider(
       create: (context) => ThemeProvider(),

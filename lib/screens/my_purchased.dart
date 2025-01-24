@@ -4,14 +4,14 @@ import '../models/book.dart';
 import '../widgets/settings_drawer.dart';
 import '../apis/book_api.dart';
 
-class MyBooksPage extends StatefulWidget {
-  const MyBooksPage({Key? key}) : super(key: key);
+class MyPurchased extends StatefulWidget {
+  const MyPurchased({Key? key}) : super(key: key);
 
   @override
-  _MyBooksPageState createState() => _MyBooksPageState();
+  _MyPurchasedState createState() => _MyPurchasedState();
 }
 
-class _MyBooksPageState extends State<MyBooksPage> {
+class _MyPurchasedState extends State<MyPurchased> {
   String _searchQuery = ''; // Holds the search query
 
   // Function to filter books based on search query
@@ -26,7 +26,7 @@ class _MyBooksPageState extends State<MyBooksPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Books'),
+        title: const Text('Add Book'),
         actions: [
           // Search bar in the AppBar
           IconButton(

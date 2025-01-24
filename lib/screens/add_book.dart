@@ -1,6 +1,8 @@
 import 'package:book_cart/models/book.dart';
+import 'package:book_cart/screens/main_screen.dart';
 import 'package:book_cart/widgets/settings_drawer.dart';
 import 'package:flutter/material.dart';
+import 'package:book_cart/apis/book_api.dart';
 
 class AddBookPage extends StatefulWidget {
   // Callback to pass the book data back
@@ -17,11 +19,46 @@ class _AddBookPageState extends State<AddBookPage> {
   String description = '';
   String imageUrl = '';
   double price = 0.0;
-  dynamic user;
 
-  void handleAddBook(Book book) {
-    // Handle the added book (e.g., add to a list or database)
-    print('Book added: ${book.title}, ID: ${book.id}');
+  void handleAddBook(Book book) async {
+    try {
+      int statusCode = await addBook(book);
+
+      if (statusCode == 200) {
+        // Show success message
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Login successful! Welcome'),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        // Navigate to MainScreen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MainScreen()),
+        );
+      } else {
+        // add book failed
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Login failed. Please check your credentials.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (error) {
+      // Handle network or other errors
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: $error'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   void _submitForm() {
@@ -32,15 +69,7 @@ class _AddBookPageState extends State<AddBookPage> {
       final id = DateTime.now().millisecondsSinceEpoch.toString();
 
       // Create a book object
-      final newBook = Book(
-        title,
-        author,
-        description,
-        imageUrl,
-        id,
-        price,
-        user,
-      );
+      final newBook = Book(title, author, description, imageUrl, id, price);
 
       // Pass the book back through the callback
       handleAddBook(newBook);
@@ -137,16 +166,16 @@ class _AddBookPageState extends State<AddBookPage> {
                   },
                   onSaved: (value) => price = double.parse(value!),
                 ),
-                TextFormField(
-                  decoration: const InputDecoration(labelText: 'User'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a user';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) => user = value, // Adjust based on user type
-                ),
+                // TextFormField(
+                //   decoration: const InputDecoration(labelText: 'User'),
+                //   validator: (value) {
+                //     if (value == null || value.isEmpty) {
+                //       return 'Please enter a user';
+                //     }
+                //     return null;
+                //   },
+                //   onSaved: (value) => user = value, // Adjust based on user type
+                // ),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _submitForm,

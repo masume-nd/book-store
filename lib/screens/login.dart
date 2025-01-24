@@ -1,5 +1,6 @@
 import 'package:book_cart/apis/book_api.dart';
 import 'package:book_cart/screens/main_screen.dart';
+import 'package:book_cart/utils/login.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -25,14 +26,14 @@ class _LoginPageState extends State<LoginPage> {
 
       try {
         final response = await loginUser(email, password);
-
+        print(response['statusCode']);
         if (response['statusCode'] == 200) {
           final token = response['token']; // Assuming token is in 'token' field
 
           // Save token to SharedPreferences
           final prefs = await SharedPreferences.getInstance();
           await prefs.setString('jwt_token', token);
-
+          await scheduleLogoutBasedOnToken(token);
           // Show success message
           if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
