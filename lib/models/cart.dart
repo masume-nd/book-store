@@ -19,3 +19,15 @@ class CartResponse {
 
   CartResponse({required this.cart, required this.statusCode});
 }
+
+class Purchased {
+  final String title;
+  final double price;
+  final String bookId;
+  final String imageUrl;
+  Purchased(
+      {required this.title,
+      required this.price,
+      required this.bookId,
+      required this.imageUrl});
+}

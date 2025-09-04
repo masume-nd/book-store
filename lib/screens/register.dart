@@ -61,7 +61,7 @@ class _RegisterPageState extends State<RegisterPage> {
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.red, Colors.blue],
+              colors: [Colors.black, Colors.grey],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),

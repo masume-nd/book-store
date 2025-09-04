@@ -1,3 +1,4 @@
+import 'package:book_cart/widgets/font_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/theme_provider.dart';
@@ -22,18 +23,16 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
 
   _loadFontSize() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+
     setState(() {
       _fontSize = prefs.getInt('fontSize') ?? 16;
     });
   }
 
-  _saveFontSize(int fontSize) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setInt('fontSize', fontSize);
-  }
-
   @override
   Widget build(BuildContext context) {
+    final fontSizeProvider = Provider.of<FontSizeProvider>(context);
+    int currentFontSize = fontSizeProvider.fontSize;
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -41,7 +40,7 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
           const DrawerHeader(
             decoration: BoxDecoration(
                 gradient: LinearGradient(
-              colors: [Colors.red, Colors.blue],
+              colors: [Colors.black, Colors.grey],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             )),
@@ -67,18 +66,16 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Current Font Size: $_fontSize'),
+                Text('Current Font Size: $currentFontSize'),
                 Slider(
-                  value: _fontSize.toDouble(),
+                  value: currentFontSize.toDouble(),
                   min: 12.0,
                   max: 24.0,
                   onChanged: (value) {
-                    setState(() {
-                      _fontSize = value.round();
-                    });
+                    fontSizeProvider.setFontSize(value.toInt());
                   },
-                  onChangeEnd: (value) {
-                    _saveFontSize(value.round());
+                  onChangeEnd: (newSize) {
+                    fontSizeProvider.setFontSize(newSize.toInt());
                   },
                 ),
                 const Row(

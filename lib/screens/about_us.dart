@@ -9,7 +9,7 @@ class AboutUsScreen extends StatelessWidget {
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.red, Colors.blue],
+              colors: [Colors.white, Colors.black],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -35,9 +35,11 @@ class AboutUsScreen extends StatelessWidget {
             SizedBox(height: 16.0),
 
             // Description Section
-            Text(
-              'Our mission is to deliver the best experience for our users by providing innovative and user-friendly solutions. '
-              'We are dedicated to improving your everyday life through our cutting-edge technologies and seamless designs.',
+            const Text(
+              'Welcome to Book Store, your ultimate destination for discovering and purchasing a wide range of books! We believe in the power of books to inspire, inform, and transform lives. Whether you’re a casual reader, an avid bibliophile, or someone looking for the perfect gift, we’ve curated a diverse selection of books across all genres to meet your needs.'
+              'At Book Store, we strive to make reading accessible to everyone. Our easy-to-use platform allows you to browse books, check reviews, and make secure purchases from the comfort of your home. We understand that every reader has unique tastes, which is why we offer personalized recommendations and an ever-growing collection of new releases, bestsellers, and timeless classics.'
+              'Our mission is to create a community of passionate readers who share a love for literature. We’re not just about selling books; we’re here to foster a love for reading, learning, and self-improvement.'
+              'Thank you for choosing [Your Bookstore Name]. We’re excited to be part of your literary journey, and we hope you find your next favorite book with us!',
               style: TextStyle(fontSize: 16.0),
               textAlign: TextAlign.justify,
             ),

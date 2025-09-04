@@ -106,14 +106,14 @@ class _UpdateBookPageState extends State<UpdateBookPage> {
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.purple, Colors.blue],
+              colors: [Colors.black, Colors.grey],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
           ),
         ),
       ),
-      drawer: const SettingsDrawer(),
+      // drawer: const SettingsDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(

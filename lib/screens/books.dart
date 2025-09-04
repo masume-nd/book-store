@@ -1,3 +1,4 @@
+import 'package:book_cart/utils/login.dart';
 import 'package:flutter/material.dart';
 import '../widgets/book_list.dart';
 import '../models/book.dart';
@@ -14,19 +15,31 @@ class BooksPage extends StatefulWidget {
 class _BooksPageState extends State<BooksPage> {
   int _selectedIndex = 0; // Keeps track of the selected tab
   String _searchQuery = ''; // Holds the search query
+  bool isAuthenticatedUser = false;
 
   // Function to filter books based on search query
+
+  void initState() {
+    super.initState();
+    _initializeState(); // Async initialization
+  }
+
+  Future<void> _initializeState() async {
+    await isAuth(); // Wait for authentication status
+  }
+
+  Future<void> isAuth() async {
+    bool aa = await isAuthenticated();
+    setState(() {
+      isAuthenticatedUser = aa; // Update authentication state
+    });
+  }
+
   List<Book> _searchBooks(List<Book> books) {
     return books
         .where((book) =>
             book.title.toLowerCase().contains(_searchQuery.toLowerCase()))
         .toList();
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index; // Update the selected index when a tab is tapped
-    });
   }
 
   @override
@@ -40,11 +53,19 @@ class _BooksPageState extends State<BooksPage> {
             icon: const Icon(Icons.shopping_cart),
             onPressed: () => Navigator.pushNamed(context, '/cart'),
           ),
+          if (isAuthenticatedUser)
+            IconButton(
+                onPressed: () async {
+                  await removeToken();
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, '/', (route) => false);
+                },
+                icon: const Icon(Icons.logout_outlined))
         ],
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.red, Colors.blue],
+              colors: [Colors.black, Colors.grey],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),

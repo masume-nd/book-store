@@ -133,6 +133,20 @@ Future<int> updateBook(Book book) async {
         'imageUrl': book.imageUrl,
         'price': book.price,
       }));
+  return response.statusCode;
+}
+
+Future<int> removeBook(String id) async {
+  String token = await getToken() ?? '';
+
+  final Uri uri = Uri.parse('$basePath/books/$id');
+  final response = await http.delete(
+    uri,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    },
+  );
 
   return response.statusCode;
 }
@@ -142,8 +156,7 @@ Future<CartResponse> getCart() async {
 
   final Uri uri = Uri.parse('$basePath/cart');
   final response = await http.get(uri, headers: {'Authorization': token});
-  // print(response.body);
-  if (response.statusCode == 200) {
+  if (response.statusCode == 200 ) {
     final Map<String, dynamic> data = json.decode(response.body)['cart'];
 
     List<Book> books = (data['items'] as List).map((el) {
@@ -157,12 +170,12 @@ Future<CartResponse> getCart() async {
         bookData['price'],
       );
     }).toList();
-    print(books);
+
     Cart cart = Cart(
       items: books,
       status: data['status'] ?? 'pending',
     );
-
+    print(cart);
     // Return CartResponse
     return CartResponse(cart: cart, statusCode: response.statusCode);
   } else {
@@ -189,16 +202,14 @@ Future<int> addBookToCart(String bookId) async {
 Future<int> removeFromCart(String bookId) async {
   String token = await getToken() ?? '';
 
-  final Uri uri = Uri.parse('$basePath/cart/items/1/');
-  final response = await http.post(uri,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': token,
-      },
-      body: json.encode({
-        'book_id': bookId,
-        'add_to_cart': false,
-      }));
+  final Uri uri = Uri.parse('$basePath/cart/$bookId');
+  final response = await http.put(
+    uri,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    },
+  );
 
   return response.statusCode;
 }
@@ -214,6 +225,34 @@ Future<int> updateCart() async {
       'Authorization': token,
     },
   );
-  
+
   return response.statusCode;
+}
+
+Future<List<Purchased>> fetchPurchasedBooks() async {
+  final Uri uri = Uri.parse('$basePath/purchases');
+  final response =
+      await http.get(uri, headers: {'Authorization': await getToken() ?? ''});
+
+  if (response.statusCode == 200) {
+    final List<dynamic> data = json.decode(response.body)['carts'];
+
+    List<Purchased> books = [];
+
+    data.map((el) {
+      List<Purchased> purchasedBooks = (el['books'] as List).map((book) {
+        return Purchased(
+          title: book['title'],
+          bookId: book['bookId'],
+          price: book['price'],
+          imageUrl: book['imageUrl'],
+        );
+      }).toList();
+
+      books.addAll(purchasedBooks);
+    }).toList();
+    return books;
+  } else {
+    throw Exception('Failed to load books');
+  }
 }

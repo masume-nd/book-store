@@ -1,5 +1,6 @@
 import 'package:book_cart/apis/book_api.dart';
 import 'package:book_cart/models/cart.dart';
+import 'package:book_cart/screens/edit_book.dart';
 import 'package:book_cart/screens/login.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,57 +24,66 @@ class _BookDetailPageState extends State<BookDetailPage> {
   @override
   void initState() {
     super.initState();
-    // isInShoppingCart = checkShoppingCartStatus();
+    isInShoppingCart = checkShoppingCartStatus();
   }
 
-  // Future<bool> checkShoppingCartStatus() async {
-  //   final response = await getCart();
-  //   try {
-  //     if (response == 200) {
-  //       final Cart cartItems = response.cart;
-
-  //       // Check if the book is in the cart based on its ID
-  //       var isInCart =
-  //           cartItems.items.any((cartItem) => cartItem.id == widget.book.id);
-
-  //       return isInCart;
-  //     } else {
-  //       // Handle error response
-  //       throw Exception('Failed to load cart items');
-  //     }
-  //   } catch (error) {
-  //     // Handle other errors
-  //     throw Exception('Failed to load cart items');
-  //   }
-  // }
+  Future<bool> checkShoppingCartStatus() async {
+    try {
+      final response = await getCart(); // Replace with your API call
+      print(response);
+      if (response.statusCode == 200) {
+        final cartItems =
+            response.cart.items; // Access items from your cart response
+        return cartItems.any((item) => item.id == widget.book.id);
+      } else {
+        throw Exception('Failed to load cart items');
+      }
+    } catch (error) {
+      debugPrint(error.toString());
+      throw Exception('Failed to load cart items');
+    }
+  }
 
   Future<void> updateShoppingCart() async {
     try {
-      final statusCode = await addBookToCart(widget.book.id);
+      final isInCart = await isInShoppingCart;
 
-      if (statusCode == 201 || statusCode == 200) {
-        // Update the local state and show a SnackBar
-        // setState(() {
-        // isInShoppingCart = Future.value(addToCart);
-        // });
-
-        // ignore: use_build_context_synchronously
-        ScaffoldMessenger.of(context).showSnackBar(
-         const SnackBar(
-            backgroundColor: Colors.green,
-            duration:  Duration(milliseconds: 500),
-            content: Text('Added to Shopping Cart'),
-          ),
-        );
-        
+      if (isInCart) {
+        // Remove the item from the cart
+        final statusCode = await removeFromCart(widget.book.id);
+        if (statusCode == 200 || statusCode == 201) {
+          showSnackBar('Removed from Shopping Cart', Colors.green);
+        } else {
+          throw Exception('Failed to remove from shopping cart');
+        }
       } else {
-        // Handle error response
-        throw Exception('Failed to update shopping cart');
+        // Add the item to the cart
+        final statusCode = await addBookToCart(widget.book.id);
+        if (statusCode == 200 || statusCode == 201) {
+          showSnackBar('Added to Shopping Cart', Colors.green);
+        } else {
+          throw Exception('Failed to add to shopping cart');
+        }
       }
+
+      // Reload the cart status after updating
+      setState(() {
+        isInShoppingCart = checkShoppingCartStatus();
+      });
     } catch (error) {
-      // Handle other errors
-      throw Exception('Failed to update shopping cart');
+      debugPrint(error.toString());
+      showSnackBar('Error: Failed to update cart', Colors.red);
     }
+  }
+
+  void showSnackBar(String message, Color color) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: color,
+        duration: const Duration(milliseconds: 500),
+      ),
+    );
   }
 
   @override
@@ -84,12 +94,25 @@ class _BookDetailPageState extends State<BookDetailPage> {
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.red, Colors.blue],
+              colors: [Colors.black, Colors.grey],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
           ),
         ),
+        actions: [
+          TextButton(
+            child: const Text('Edit'),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => UpdateBookPage(book: widget.book),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -154,56 +177,56 @@ class _BookDetailPageState extends State<BookDetailPage> {
                 ),
 
                 const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () async {
-                    // bool addToCart = await checkShoppingCartStatus();
-                    await updateShoppingCart();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 32, vertical: 12),
-                  ),
-                  child: Text('add to cart'),
-                  // child: FutureBuilder<bool>(
-                  //   future: isInShoppingCart,
-                  //   builder: (context, snapshot) {
-                  //     if (snapshot.connectionState == ConnectionState.waiting) {
-                  //       return const CircularProgressIndicator();
-                  //     } else if (snapshot.hasError) {
-                  //       return Text('Error: ${snapshot.error}');
-                  //     } else {
-                  //       return Text(snapshot.data == true
-                  //           ? 'Remove from Cart'
-                  //           : 'Add to Cart');
-                  //     }
-                  //   },
-                  // ),
-                ),
+                // ElevatedButton(
+                //   onPressed: () async {
+                //     // bool addToCart = await checkShoppingCartStatus();
+                //     await updateShoppingCart();
+                //   },
+                //   style: ElevatedButton.styleFrom(
+                //     padding: const EdgeInsets.symmetric(
+                //         horizontal: 32, vertical: 12),
+                //   ),
+                //   child: FutureBuilder<bool>(
+                //     future: isInShoppingCart,
+                //     builder: (context, snapshot) {
+                //       if (snapshot.connectionState == ConnectionState.waiting) {
+                //         return const CircularProgressIndicator();
+                //       } else if (snapshot.hasError) {
+                //         return Text('Error: ${snapshot.error}');
+                //       } else {
+                //         return Text(snapshot.data == true
+                //             ? 'Remove from Cart'
+                //             : 'Add to Cart');
+                //       }
+                //     },
+                //   ),
+                // ),
 
                 // Add to shopping cart button
-                // FutureBuilder<bool>(
-                //   future: isInShoppingCart,
-                //   builder: (context, snapshot) {
-                //     if (snapshot.connectionState == ConnectionState.waiting) {
-                //       // Return a loading indicator if the future is still loading
-                //       return const CircularProgressIndicator();
-                //     } else if (snapshot.hasError) {
-                //       // Return an error message if there's an error
-                //       return Text('Error: ${snapshot.error}');
-                //     } else {
-                //       // Return the appropriate icon based on the shopping cart status
-                //       return TextButton.icon(
-                //         onPressed: () => updateShoppingCart(!snapshot.data!),
-                //         icon: Icon(snapshot.data!
-                //             ? Icons.remove_shopping_cart
-                //             : Icons.add_shopping_cart),
-                //         label: Text(snapshot.data!
-                //             ? 'Remove from Cart'
-                //             : 'Add to Cart'),
-                //       );
-                //     }
-                //   },
-                // ),
+                FutureBuilder<bool>(
+                  future: isInShoppingCart,
+                  builder: (context, snapshot) {
+                    print(snapshot.error);
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      return Text(
+                        'Error: ${snapshot.error ?? 'Something went wrong!'}',
+                        style: const TextStyle(color: Colors.red),
+                      );
+                    } else {
+                      final isInCart = snapshot.data ?? false;
+                      return Container(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: updateShoppingCart,
+                          child: Text(
+                              isInCart ? 'Remove from Cart' : 'Add to Cart'),
+                        ),
+                      );
+                    }
+                  },
+                )
               ],
             ),
           ),

@@ -1,5 +1,6 @@
 import 'package:book_cart/apis/book_api.dart';
 import 'package:book_cart/models/cart.dart';
+import 'package:book_cart/screens/my_purchased.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -47,19 +48,18 @@ class ShoppingCartPageState extends State<ShoppingCartPage> {
       final statusCode = await updateCart();
 
       if (statusCode == 200) {
-        // Update the Future variable to trigger a rebuild
-        // setState(() {
-        //   shoppingCartFuture = getShoppingCart();
-        // });
-
-        // Show a SnackBar
-        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             backgroundColor: Colors.green,
             duration: Duration(milliseconds: 500),
             content: Text('Shopping Cart Checkedout Successfully'),
           ),
+        );
+
+        // ignore: use_build_context_synchronously
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MyPurchased()),
         );
       } else {
         // Handle error response
@@ -79,7 +79,7 @@ class ShoppingCartPageState extends State<ShoppingCartPage> {
         flexibleSpace: Container(
           decoration: const BoxDecoration(
               gradient: LinearGradient(
-            colors: [Colors.red, Colors.blue],
+            colors: [Colors.black, Colors.grey],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           )),
@@ -112,25 +112,55 @@ class ShoppingCartPageState extends State<ShoppingCartPage> {
                       itemCount: shoppingCart.length,
                       itemBuilder: (context, index) {
                         final Book book = shoppingCart[index];
-                        return ListTile(
-                          onTap: () => Navigator.push(
+                        return Dismissible(
+                          key: Key(book.id), // Unique key for each book
+                          direction: DismissDirection
+                              .endToStart, // Swipe from right to left
+                          background: Container(
+                            color: Colors.red,
+                            alignment: Alignment.centerRight,
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child:
+                                const Icon(Icons.delete, color: Colors.white),
+                          ),
+                          onDismissed: (direction) async {
+                            // Handle removing the book
+                            await removeFromCart(book.id);
+                            setState(() {
+                              shoppingCartFuture =
+                                  getShoppingCart(); // Refresh the cart
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content:
+                                    Text('${book.title} removed from cart'),
+                                backgroundColor: Colors.red,
+                                duration: const Duration(seconds: 1),
+                              ),
+                            );
+                          },
+                          child: ListTile(
+                            onTap: () => Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
                                     BookDetailPage(book: book),
-                              )).then((value) {
-                            setState(() {
-                              shoppingCartFuture = getShoppingCart();
-                            });
-                          }),
-                          leading: Image.network(book.imageUrl),
-                          title: Text(book.title),
-                          subtitle: Text('Price: \$${book.price}'),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.pending_actions_outlined),
-                            onPressed: () {
-                              updateShoppingCart();
-                            },
+                              ),
+                            ).then((value) {
+                              setState(() {
+                                shoppingCartFuture =
+                                    getShoppingCart(); // Refresh the cart on return
+                              });
+                            }),
+                            leading: Image.network(book.imageUrl),
+                            title: Text(book.title),
+                            subtitle: Text('Price: \$${book.price}'),
+                            trailing: IconButton(
+                              icon: const Icon(Icons.pending_actions_outlined),
+                              onPressed: () {
+                                updateShoppingCart();
+                              },
+                            ),
                           ),
                         );
                       },

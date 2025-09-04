@@ -1,3 +1,5 @@
+import 'package:book_cart/models/cart.dart';
+import 'package:book_cart/screens/book_detail.dart';
 import 'package:flutter/material.dart';
 import '../widgets/book_list.dart';
 import '../models/book.dart';
@@ -15,7 +17,7 @@ class _MyPurchasedState extends State<MyPurchased> {
   String _searchQuery = ''; // Holds the search query
 
   // Function to filter books based on search query
-  List<Book> _searchBooks(List<Book> books) {
+  List<Purchased> _searchBooks(List<Purchased> books) {
     return books
         .where((book) =>
             book.title.toLowerCase().contains(_searchQuery.toLowerCase()))
@@ -26,7 +28,7 @@ class _MyPurchasedState extends State<MyPurchased> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Book'),
+        title: const Text('My Purchased'),
         actions: [
           // Search bar in the AppBar
           IconButton(
@@ -37,44 +39,31 @@ class _MyPurchasedState extends State<MyPurchased> {
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.red, Colors.blue],
+              colors: [Colors.black, Colors.grey],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
           ),
         ),
       ),
-      drawer: const SettingsDrawer(),
       body: SafeArea(
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                onChanged: (query) {
-                  setState(() {
-                    _searchQuery =
-                        query; // Update the search query on input change
-                  });
-                },
-                decoration: const InputDecoration(
-                  labelText: 'Search books',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.search),
-                ),
-              ),
+            const SizedBox(
+              height: 16,
             ),
             Expanded(
-              child: FutureBuilder<List<Book>>(
-                future: fetchMyBooks(), // Call the function to fetch books
+              child: FutureBuilder<List<Purchased>>(
+                future:
+                    fetchPurchasedBooks(), // Call the function to fetch books
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
                     return Center(child: Text('${snapshot.error}'));
                   } else {
-                    List<Book> books = snapshot.data ?? [];
-                    List<Book> filteredBooks = _searchBooks(
+                    List<Purchased> books = snapshot.data ?? [];
+                    List<Purchased> filteredBooks = _searchBooks(
                         books); // Filter books based on search query
 
                     if (filteredBooks.isEmpty) {
@@ -86,9 +75,18 @@ class _MyPurchasedState extends State<MyPurchased> {
                       );
                     }
 
-                    return BookList(
-                      books:
-                          filteredBooks, // Pass the filtered list to BookList widget
+                    return Expanded(
+                      child: ListView.builder(
+                        itemCount: filteredBooks.length,
+                        itemBuilder: (context, index) {
+                          final Purchased book = filteredBooks[index];
+                          return ListTile(
+                            leading: Image.network(book.imageUrl),
+                            title: Text(book.title),
+                            subtitle: Text('Price: \$${book.price}'),
+                          );
+                        },
+                      ),
                     );
                   }
                 },

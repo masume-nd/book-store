@@ -1,3 +1,4 @@
+import 'package:book_cart/widgets/book_list_deleted.dart';
 import 'package:flutter/material.dart';
 import '../widgets/book_list.dart';
 import '../models/book.dart';
@@ -37,7 +38,7 @@ class _MyBooksPageState extends State<MyBooksPage> {
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.red, Colors.blue],
+              colors: [Colors.black, Colors.grey],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -86,7 +87,7 @@ class _MyBooksPageState extends State<MyBooksPage> {
                       );
                     }
 
-                    return BookList(
+                    return MyBookList(
                       books:
                           filteredBooks, // Pass the filtered list to BookList widget
                     );
