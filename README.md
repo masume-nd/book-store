@@ -1,3 +1,5 @@
-# book_cart
+A book-store with flutter.
 
-A new Flutter project.
+for sell and buying books.
+
+has authentication and manage users.
